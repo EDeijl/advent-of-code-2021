@@ -8,8 +8,8 @@ main = do
   day1Input <- readFileIntoInt "./files/input-day-1.txt"
   printf "Day 1A; number of increases: %d\n"  $ countIncreases day1Input
   printf "Day 1B; numberf of increases: %d\n" $ countIncreases $ sumsOfThree day1Input
-  -- day2Input <- readFileIntoInstruction "./files/input-day-2.txt"
-  -- printf "Day 2A; finalCoordinate: %x\n" $ fmap sequence day2Input day2Input
+  day2Input <- readFileIntoInstruction "./files/input-day-2.txt"
+  printf "Day 2; finalCoordinate: %d\n" $ multCoord $ calculateFinalCoordinate day2Input
 
 
 --- Day 1
@@ -35,34 +35,40 @@ readFileIntoInt fileName = do
 data Direction = Up | Forward | Down
 data Instruction = Instruction Direction Int
 
-data Coordinate = Coordinate Int Int
+data Coordinate = Coordinate Int Int Int
   deriving (Show)
 
 x :: Coordinate -> Int
-x (Coordinate x _) = x
+x (Coordinate x _ _) = x
 
 y :: Coordinate -> Int
-y (Coordinate _ y) = y
+y (Coordinate _ y _) = y
+
+z :: Coordinate -> Int
+z (Coordinate _ _ z) = z
+
+multCoord :: Coordinate -> Int
+multCoord (Coordinate x y _) = x * y
 -- from 0,0 calculate the final coordinate when summing all instructions
 -- where the direction is up or forward
 calculateFinalCoordinate :: [Instruction] -> Coordinate
 calculateFinalCoordinate = foldl (\coord (Instruction direction distance) ->
   case direction of
-    Up -> Coordinate (x coord) (y coord + distance)
-    Down -> Coordinate (x coord) (y coord - distance)
-    Forward -> Coordinate (x coord + distance) (y coord)
-  ) (Coordinate 0 0)
+    Up -> Coordinate (x coord) (y coord) (z coord - distance)
+    Down -> Coordinate (x coord) (y coord) (z coord + distance)
+    Forward -> Coordinate (x coord + distance) (y coord + (z coord * distance)) (z coord)
+  ) (Coordinate 0 0 0)
 
 
 -- read File into a list of instructions
-readFileIntoInstruction :: String -> IO [Maybe Instruction]
+readFileIntoInstruction :: String -> IO [Instruction]
 readFileIntoInstruction fileName = do
   contents <- readFile fileName
   return (map (parseInstruction . words) (lines contents))
 
-parseInstruction :: [String] -> Maybe Instruction
-parseInstruction [direction, distance] = Just  $ Instruction (parseDirection direction) (read distance)
-parseInstruction _ = Nothing
+parseInstruction :: [String] -> Instruction
+parseInstruction [direction, distance] =  Instruction (parseDirection direction) (read distance)
+parseInstruction _ = error "something went horribly wrong parsing instructions"
 
 parseDirection :: String -> Direction
 parseDirection "up" = Up
