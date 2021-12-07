@@ -48,25 +48,8 @@ filterMatrixByEpsilonAtN matrix n epsilon =  filter (\x -> x !! n == epsilon) ma
 o2genr :: Int -> [[Int]] -> [[Int]]
 o2genr n matrix = filter (\x -> x !! n == gamma (transpose matrix !! n)) matrix
 
--- run a mapping function zipped with an index
-mapWithIndex :: (Int -> [Int] -> [Int]) -> [[Int]] -> [[Int]]
-mapWithIndex f = zipWith f [0..]
-
-
-gammaAtN :: [[Int]] -> Int -> Int
-gammaAtN matrix n = gamma $ matrix !! n
-
 filterMatrixByGammaAtN :: [[Int]] -> Int -> Int -> [[Int]]
 filterMatrixByGammaAtN matrix n gamma = filter (\x -> x !! n == gamma) matrix
-
-hasGammaAtPositionN :: [Int] -> Int -> Int -> Bool
-hasGammaAtPositionN row n gamma = row !! n == gamma
-
-
-
-filterGamma :: [Int] -> [Int]
-filterGamma l@(x:xs) = if x == gamma l then l else []
-filterGamma _ = []
 
 -- collect gammas from list
 gammas :: [[Int]] -> [Int]
