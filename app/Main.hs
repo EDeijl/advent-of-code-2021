@@ -8,6 +8,7 @@ import Data.List
 import Data.Ord
 import Data.Bits (Bits(rotateL))
 import Day3 (answer)
+import Day4 (answer)
 
 main :: IO ()
 main = do
@@ -16,4 +17,5 @@ main = do
   printf "Day 1B; numberf of increases: %d\n" $ countIncreases $ sumsOfThree day1Input
   day2Input <- readFileIntoInstruction "./files/input-day-2.txt"
   printf "Day 2; finalCoordinate: %d\n" $ multCoord $ calculateFinalCoordinate day2Input
-  answer
+  Day3.answer
+  Day4.answer
