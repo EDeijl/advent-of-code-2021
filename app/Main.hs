@@ -9,6 +9,7 @@ import Data.Ord
 import Data.Bits (Bits(rotateL))
 import Day3 (answer)
 import Day4 (answer)
+import Day5 (answer)
 
 main :: IO ()
 main = do
@@ -19,3 +20,4 @@ main = do
   printf "Day 2; finalCoordinate: %d\n" $ multCoord $ calculateFinalCoordinate day2Input
   Day3.answer
   Day4.answer
+  Day5.answer
