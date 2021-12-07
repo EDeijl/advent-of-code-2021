@@ -27,6 +27,9 @@ answer = do
   let (finalNumber, winningBoard) = play inputs boards
   print (finalNumber, winningBoard)
   putStrLn $ "Score of winning board: " ++ show (finalNumber * scoreBoard winningBoard)
+  let (winners, losers) = playUntilLastWin inputs ([], boards)
+  let finalWinner = last winners
+  putStrLn $ "Score of last winning board: " ++ show (scoreBoard (fst finalWinner) * snd finalWinner )
 
 
 scoreBoard :: Board -> Int
@@ -44,6 +47,14 @@ play (x:xs) boards =
         Nothing -> play xs nextBoards
 
 
+playUntilLastWin :: Inputs -> ([(Board, Int)], [Board]) -> ([(Board, Int)], [Board])
+playUntilLastWin [] (winningBoards, notYetWonBoards) = (winningBoards, notYetWonBoards)
+playUntilLastWin (x:xs) (winningBoards, notYetWonBoards) =
+  let nextBoards = map (playBingoStep x) notYetWonBoards
+      maybeWinningBoard = find hasWon nextBoards
+  in case maybeWinningBoard of
+        Just winningBoard -> playUntilLastWin xs (winningBoards ++ [(winningBoard, x)], filter (not . hasWon) nextBoards)
+        Nothing -> playUntilLastWin xs (winningBoards, nextBoards)
 
 playBingoStep :: Int -> Board -> Board
 playBingoStep v board =
