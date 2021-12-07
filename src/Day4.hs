@@ -25,7 +25,6 @@ answer = do
   input <- readFile "./files/input-day-4.txt"
   let (inputs, boards) = parseStringToGame input
   let (finalNumber, winningBoard) = play inputs boards
-  print (finalNumber, winningBoard)
   putStrLn $ "Score of winning board: " ++ show (finalNumber * scoreBoard winningBoard)
   let (winners, losers) = playUntilLastWin inputs ([], boards)
   let finalWinner = last winners
