@@ -22,6 +22,8 @@ data Vector = Vector {
   , end :: Point
 } deriving (Show, Eq)
 
+data Direction = Vertical | Horizontal deriving (Show, Eq)
+
 crossMapAllIntersects :: [Vector] -> Int
 crossMapAllIntersects vectors = foldl (\acc vector -> acc + length (filter id (intersects vector vectors))) 0 vectors
 
@@ -49,7 +51,7 @@ doIntersect vec1 vec2 =  (o1 /= o2 && o3 /= o4)
 -- 1 -> clockwise
 -- 2 -> counterclockwise
 orientation :: Point -> Point -> Point -> Int
-orientation p q r 
+orientation p q r
   | det == 0 = 0
   | det > 0 =  1
   | otherwise = 2
@@ -66,8 +68,40 @@ onSegment p q r =  (x q <= max (x p) (x r)) && (x q >= min (x p) (x r))
 parseInput :: String -> [Vector]
 parseInput input = map parseVector $ lines input
 
+-- Brute force it yo
+vectorToList :: Vector -> [Int]
+vectorToList v = replicate (vectorLength v) 1
+
+vectorToGrid :: Int -> Int -> Vector -> [[Int]]
+vectorToGrid width height v =
+  case vectorDirection v of
+    Vertical -> 
+    Horizontal -> concat [replicate (y start v) 0, row, ]
+  where
+    points = vectorToList v
+    row = concat [replicate (x (start v)) 0, points, replicate (width - x (end v)) 0]
+    column = concat [replicate (y start v)) 0, points, replicate (height - y (end v)) 0]
+
 -- Parse a string like "0,9 -> 5,9" into a Vector (Point 0 9) (Point 5 9)
 parseVector :: String -> Vector
 parseVector s = Vector (Point (read x1) (read y1)) (Point (read x2) (read y2))
   where
     [x1, y1, _, x2, y2] = concatMap (splitOn ",") (words s)
+
+
+vectorLength :: Vector -> Int
+vectorLength v
+  | vectorDirection v == Vertical   = y (start v') + y (end v') + 1
+  | otherwise  = x (start v') + x (end v') + 1 
+  where
+    v' = normalizeVector v
+
+
+vectorDirection :: Vector -> Direction
+vectorDirection v = if x (start v) == x (end v) then Vertical else Horizontal
+
+normalizeVector :: Vector -> Vector
+normalizeVector v
+  | x (start v) > x (end v) = Vector (end v) (start v)
+  | y (start v) > y (end v) = Vector (end v) (start v)
+  | otherwise = v
